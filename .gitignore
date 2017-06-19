@@ -1,3 +1,6 @@
 platforms
 .npmignore
 .*.swp
+hooks
+node_modules
+plugins
