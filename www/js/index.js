@@ -23,7 +23,6 @@ var app = function() {
     // Application Constructor
     self.initialize = function() {
         document.addEventListener('deviceready', this.onDeviceReady.bind(this), false);
-		$("#app").show();
     };
 
     // deviceready Event Handler
@@ -36,13 +35,8 @@ var app = function() {
 
     // Update DOM on a Received Event
     self.receivedEvent = function(id) {
-        var parentElement = document.getElementById(id);
-        var listeningElement = parentElement.querySelector('.listening');
-        var receivedElement = parentElement.querySelector('.received');
-
-        listeningElement.setAttribute('style', 'display:none;');
-        receivedElement.setAttribute('style', 'display:block;');
-
+		$("#app").show();
+		$('.page-footer').show();
         console.log('Received Event: ' + id);
     };
 
@@ -63,6 +57,16 @@ var app = function() {
 
 	self.onClickEditSet = function(id) {
 		console.log("onClickEditSet()");
+	};
+
+	self.shuffle = function (a) {
+		var j, x, i;
+		for (i = a.length; i; i--) {
+			j = Math.floor(Math.random() * i);
+			x = a.splice(i-1, 1, a[j]);
+			a.splice(j, 1, x[0]);
+		}
+
 	};
 	
 	self.vue = new Vue({

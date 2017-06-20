@@ -33,42 +33,52 @@
 		<meta name="msapplication-tap-highlight" content="no">
 		<meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
 		<link rel="stylesheet" type="text/css" href="css/index.css">
+		<link rel="stylesheet" type="text/css" href="css/transitions.css">
 		<!--Import Google Icon Font-->
 		<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 		<!--Import materialize.css-->
-		<link type="text/css" rel="stylesheet" href="css/materialize.min.css"  media="screen,projection"/>
+		<link type="text/css" rel="stylesheet" href="css/materialize.css"  media="screen,projection"/>
 		<title>Hello World</title>
 	</head>
 	<body>
-		<div class="app" id="app" style="display:none;">
-			<div class="row container">
-				<h1>{{ title }}</h1>
-			</div>
+		<main class="app" id="app" style="display:none;">
+		<div class="navbar-fixed">
+			<nav class="navbar-extended">
+				<div class="container row">
+					<div class="nav-wrapper">
+						<span class="nav-title">{{title}}</span>
+						<a class="btn-floating btn-large halfway-fab waves-effect waves-light blue" v-on:click="onClickAdd()">
+							<i class="material-icons">add</i>
+						</a>
+					</div>
+				</div>
+			</nav>
+		</div>
 
+		<div class="main-view">
 			<div class="container" id="set-list">
-				<div class="card-panel" v-for="set in sets" v-on:click="onClickSet(set.id)">
+				<transition-group name="list">
+				<div class="card-panel" v-for="(set, index) in sets" v-on:click="onClickSet(index)" v-bind:key="set">
 					#<b>{{ set.id }}</b>: {{ set.text }}
 					<div id="more" v-if="set.show_more">
 						You're currently seeing more.
 						<div class="right-align">
-							<a class="btn-floating btn-small waves-effect blue" v-on:click="onClickEditSet(set.id)"><i class="material-icons">edit</i></a>
+							<a class="btn-floating btn-small waves-effect blue" v-on:click.stop="onClickEditSet(set.id)"><i class="material-icons">edit</i></a>
 						</div>
 					</div>
 				</div>
-			</div>
-
-			<!-- FAB -->
-			<div class="fixed-action-btn">
-				<a class="btn-floating btn-large waves-effect red" v-on:click="onClickAdd()">
-					<i class="large material-icons">add</i>
-				</a>
+				</transition-group>
 			</div>
 		</div>
+
+		</main>
+
 		<!--Import jQuery before materialize.js-->
 		<script type="text/javascript" src="js/jquery-min.js"></script>
 		<script type="text/javascript" src="js/materialize.min.js"></script>
 		<script type="text/javascript" src="cordova.js"></script>
 		<script type="text/javascript" src="js/vue.js"></script>
+		<script type="text/javascript" src="js/dots.js"></script>
 		<script type="text/javascript" src="js/index.js"></script>
 	</body>
 </html>
