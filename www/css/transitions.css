@@ -1,0 +1,13 @@
+.list-enter-active, .list-leave-active {
+	transition: all 0.2s;
+}
+.list-enter, .list-leave-to /* .list-leave-active for <2.1.8 */ {
+	opacity: 0;
+	transform: translateX(-30px);
+}
+.list-move {
+	transition: transform 0.2s;
+}
+.list-leave-active {
+	position: absolute;
+}
