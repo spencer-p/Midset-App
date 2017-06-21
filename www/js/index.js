@@ -30,13 +30,13 @@ var app = function() {
     // Bind any cordova events here. Common events are:
     // 'pause', 'resume', etc.
     self.onDeviceReady = function() {
+		$("#app").show();
+		$('.page-footer').show();
         self.receivedEvent('deviceready');
     };
 
     // Update DOM on a Received Event
     self.receivedEvent = function(id) {
-		$("#app").show();
-		$('.page-footer').show();
         console.log('Received Event: ' + id);
     };
 
@@ -52,7 +52,13 @@ var app = function() {
 
 	self.onClickSet = function(id) {
 		console.log("onClickSet()");
+		// Toggle show more
 		self.vue.sets[id].show_more = !self.vue.sets[id].show_more;
+
+		// Enable the select inputs. This is set to a timeout of 0
+		// because it has to happen after the function returns and Vue
+		// actually creates the select elements. I do not know if there
+		// is a better way to do this.
 		setTimeout(function() {$('select').material_select();}, 0);
 	};
 
@@ -62,6 +68,7 @@ var app = function() {
 		//TODO: update midsets etc
 	};
 
+	// Shuffle function for testing set movement animation
 	self.shuffle = function (a) {
 		var j, x, i;
 		for (i = a.length; i; i--) {
