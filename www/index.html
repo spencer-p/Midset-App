@@ -59,12 +59,65 @@
 			<div class="container" id="set-list">
 				<transition-group name="list">
 				<div class="card-panel" v-for="(set, index) in sets" v-on:click="onClickSet(index)" v-bind:key="set">
-					#<b>{{ set.id }}</b>: {{ set.text }}
 					<div id="more" v-if="set.show_more">
-						You're currently seeing more.
-						<div class="right-align">
-							<a class="btn-floating btn-small waves-effect blue" v-on:click.stop="onClickEditSet(set.id)"><i class="material-icons">edit</i></a>
+						Edit this dot:
+						<div class="row">
+							<div class="input-field col s6" v-on:click.stop>
+								<input v-bind:value="set.id" id="last_name" type="text" class="validate">
+								<label class="active" for="last_name">ID/#</label>
+							</div>
+							<div class="input-field col s6" v-on:click.stop>
+								<input v-bind:checked="true" v-bind:name="'side'+index" class="with-gap" type="radio" v-bind:id="'side_one'+index"  />
+								<label v-bind:for="'side_one'+index">S1</label>
+								<input v-bind:name="'side'+index" class="with-gap" type="radio" v-bind:id="'side_two'+index"  />
+								<label v-bind:for="'side_two'+index">S1</label>
+							</div>
 						</div>
+						<div class="row">
+							<div class="input-field col s4" v-on:click.stop>
+								<input id="xsteps" type="text" class="validate">
+								<label for="xsteps">x steps</label>
+							</div>
+							<div class="input-field col s4" v-on:click.stop>
+								<select>
+									<option value="" disabled selected>in/out</option>
+									<option v-bind:selected="true" value="in">in</option>
+									<option value="out">out</option>
+								</select>
+							</div>
+							<div class="input-field col s4" v-on:click.stop>
+								<input id="yard" type="text" class="validate">
+								<label for="yard">yard</label>
+							</div>
+						</div>
+						<div class="row">
+							<div class="input-field col s4" v-on:click.stop>
+								<input id="ysteps" type="text" class="validate">
+								<label for="ysteps">y steps</label>
+							</div>
+							<div class="input-field col s4" v-on:click.stop>
+								<select>
+									<option value="" disabled selected>front/back</option>
+									<option value="front">front</option>
+									<option value="behind">behind</option>
+								</select>
+							</div>
+							<div class="input-field col s4" v-on:click.stop>
+								<select>
+									<option value="" disabled selected>hash/side</option>
+									<option value="FS">FS</option>
+									<option value="FH">FH</option>
+									<option value="BH">BH</option>
+									<option value="BS">BS</option>
+								</select>
+							</div>
+						</div>
+						<div class="right-align">
+							<a class="btn-floating btn-small waves-effect blue" v-on:click.stop="onClickDeleteSet(index)"><i class="material-icons">delete</i></a>
+						</div>
+					</div>
+					<div id="normal" v-else>
+						#<b>{{ set.id }}</b>: {{ set.text }}
 					</div>
 				</div>
 				</transition-group>

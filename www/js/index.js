@@ -53,10 +53,13 @@ var app = function() {
 	self.onClickSet = function(id) {
 		console.log("onClickSet()");
 		self.vue.sets[id].show_more = !self.vue.sets[id].show_more;
+		setTimeout(function() {$('select').material_select();}, 0);
 	};
 
-	self.onClickEditSet = function(id) {
-		console.log("onClickEditSet()");
+	self.onClickDeleteSet = function(id) {
+		console.log("onClickDeleteSet()");
+		self.vue.sets.splice(id,1);
+		//TODO: update midsets etc
 	};
 
 	self.shuffle = function (a) {
@@ -81,7 +84,7 @@ var app = function() {
 		methods: {
 			onClickAdd: self.onClickAdd,
 			onClickSet: self.onClickSet,
-			onClickEditSet: self.onClickEditSet
+			onClickDeleteSet: self.onClickDeleteSet
 		}
 	});
 
