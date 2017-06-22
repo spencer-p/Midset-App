@@ -47,21 +47,20 @@ var Dot = function(data) {
 		// First: Yardline to 50 in steps.
 		var yardTo50 = ((50-data.yard)*8)/5 // yards * 8/5
 
-		// if xsteps is IN, flip it.
-		if (data.inOut == "in") { data.xSteps *= -1; }
-
 		// Compute x relative to 50
-		this.x = yardTo50 + data.xSteps;
+		// ternary does: if xsteps is IN, flip xsteps.
+		this.x = yardTo50 + data.xSteps * ((data.inOut == "in") ? -1 : 1);
+		// The ternary is used instead of flipping data.xSteps so that we stay pure.
 
 		// if the yard is on the negative side, flip x
 		if (data.side == "1") { this.x *= -1; }
 
 		// y is easier.
-		// flip ysteps if in front
-		if (data.frontBack == "front") { data.ySteps *= -1; }
 
 		// compute final y. IMPORTANT: data.yRef must be in the same form as our REF table.
-		this.y = REF[data.yReference] + parseFloat(data.ySteps);
+		// parsefloat because JS thinks it's a string sometimes (but not xsteps, dk why)
+		// ternary op used as above in xsteps
+		this.y = REF[data.yReference] + parseFloat(data.ySteps) * ((data.frontBack == "front") ? -1 : 1);
 
 		// Finally take counts
 		this.counts = data.counts;
