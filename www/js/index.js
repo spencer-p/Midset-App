@@ -40,20 +40,71 @@ var app = function() {
         console.log('Received Event: ' + id);
     };
 
+	// Template for new sets
+	self.NEW_SET = function(id) {
+		return {
+			id : id,
+			show_more : true,
+			text : "New set",
+			data: {
+				frontBack : "front",
+				inOut : "in",
+				side : "1",
+				xSteps : "0",
+				yReference : "FH",
+				ySteps : "0",
+				yard : "50",
+				counts: 0
+			}
+		}
+	}
+
+	// Compute analysis
+	self.computeAnalysis = function(i) {
+		// Only do work if there is a set after to do math with
+		if (i < self.vue.sets.length-1 
+			&& self.vue.sets[i].dot != undefined
+			&& self.vue.sets[i+1].dot != undefined) {
+			var analysis = {};
+			// Compute midset
+			var midset = self.vue.sets[i].dot.midset(self.vue.sets[i+1].dot);
+			analysis.midset = midset.humanReadable();	
+
+			// Update analysis in model
+			self.vue.sets[i].analysis = analysis;
+		}
+	}
+
 	self.onClickAdd = function() {
 		console.log("onClickAdd()");
 		// Insert another empty set at the end
-		self.vue.sets.splice(self.vue.sets.length, 1, {
-			id: self.vue.sets.length,
-			text: "",
-			show_more: false
-		});
+		self.vue.sets.splice(self.vue.sets.length, 1, self.NEW_SET(self.vue.sets.length));
 	};
 
-	self.onClickSet = function(id) {
+	self.onClickSet = function(index) {
 		console.log("onClickSet()");
+
+		// Leaving show_more - compute new data
+		if (self.vue.sets[index].show_more) {
+			// Generate dot
+			self.vue.sets[index].dot = new Dot(self.vue.sets[index].data);
+			console.log(self.vue.sets[index].dot.humanReadable());
+
+			// If not last, generate next midset
+			self.computeAnalysis(index);
+
+			// If not first, generate prev midset
+			if (index != 0) {
+				self.computeAnalysis(index-1);
+			}
+		}
+		// Enter show_more
+		else {
+
+		}
+
 		// Toggle show more
-		self.vue.sets[id].show_more = !self.vue.sets[id].show_more;
+		self.vue.sets[index].show_more = !self.vue.sets[index].show_more;
 
 		// Enable the select inputs. This is set to a timeout of 0
 		// because it has to happen after the function returns and Vue
@@ -78,20 +129,65 @@ var app = function() {
 		}
 
 	};
+
+	// Get midset of an indexed set
+	self.getMidset = function(index) {
+		if (self.vue === undefined || index >= self.vue.sets.length - 1) {
+			return;
+		}
+		var dot1 = new Dot(self.vue.sets[index]);
+		console.log(dot1.x + " " + dot1.y)
+		var dot2 = new Dot(self.vue.sets[index+1]);
+		console.log(dot2.x + " " + dot2.y)
+		var midset = dot1.midset(dot2);
+		console.log(midset.x);
+		console.log(midset.y);
+		return midset.humanReadable();
+	}
 	
 	self.vue = new Vue({
 		el: "#app",
 		data: {
 			sets: [
-				{id: 0, text: "Left right up down", show_more: false},
-				{id: 1, text: "Front of the front hash or other stuff", show_more: false}	
+				{
+					id : 0,
+					show_more : false,
+					text : "Left right up down",
+					data: {
+						frontBack : "front",
+						inOut : "in",
+						side : "1",
+						xSteps : "3",
+						yReference : "FH",
+						ySteps : "6",
+						yard : "25",
+						counts: 8
+					}
+
+				},
+				{
+					id : 1,
+					show_more : false,
+					text : "Front of the front hash or other stuff",
+					data: {
+						frontBack : "behind",
+						inOut : "in",
+						side : "2",
+						xSteps : "4",
+						yReference : "BS",
+						ySteps : "4",
+						yard : "35",
+						counts: 8
+					}
+				}
 			],
 			title: "Midset Calculator"
 		},
 		methods: {
 			onClickAdd: self.onClickAdd,
 			onClickSet: self.onClickSet,
-			onClickDeleteSet: self.onClickDeleteSet
+			onClickDeleteSet: self.onClickDeleteSet,
+			getMidset: self.getMidset
 		}
 	});
 
