@@ -58,66 +58,73 @@
 		<div class="main-view">
 			<div class="container" id="set-list">
 				<transition-group name="list">
-				<div class="card-panel" v-for="(set, index) in sets" v-on:click="onClickSet(index)" v-bind:key="set">
-					<div id="more" v-if="set.show_more">
-						Edit this dot:
-						<div class="row">
-							<div class="input-field col s6" v-on:click.stop>
-								<input v-bind:value="set.id" id="last_name" type="text" class="validate">
-								<label class="active" for="last_name">ID/#</label>
-							</div>
-							<div class="input-field col s6" v-on:click.stop>
-								<input v-bind:checked="true" v-bind:name="'side'+index" class="with-gap" type="radio" v-bind:id="'side_one'+index"  />
-								<label v-bind:for="'side_one'+index">S1</label>
-								<input v-bind:name="'side'+index" class="with-gap" type="radio" v-bind:id="'side_two'+index"  />
-								<label v-bind:for="'side_two'+index">S1</label>
-							</div>
-						</div>
-						<div class="row">
-							<div class="input-field col s4" v-on:click.stop>
-								<input id="xsteps" type="text" class="validate">
-								<label for="xsteps">x steps</label>
-							</div>
-							<div class="input-field col s4" v-on:click.stop>
-								<select>
-									<option value="" disabled selected>in/out</option>
-									<option v-bind:selected="true" value="in">in</option>
-									<option value="out">out</option>
-								</select>
-							</div>
-							<div class="input-field col s4" v-on:click.stop>
-								<input id="yard" type="text" class="validate">
-								<label for="yard">yard</label>
-							</div>
-						</div>
-						<div class="row">
-							<div class="input-field col s4" v-on:click.stop>
-								<input id="ysteps" type="text" class="validate">
-								<label for="ysteps">y steps</label>
-							</div>
-							<div class="input-field col s4" v-on:click.stop>
-								<select>
-									<option value="" disabled selected>front/back</option>
-									<option value="front">front</option>
-									<option value="behind">behind</option>
-								</select>
-							</div>
-							<div class="input-field col s4" v-on:click.stop>
-								<select>
-									<option value="" disabled selected>hash/side</option>
-									<option value="FS">FS</option>
-									<option value="FH">FH</option>
-									<option value="BH">BH</option>
-									<option value="BS">BS</option>
-								</select>
-							</div>
+					<div class="card-panel" v-for="(set, index) in sets" v-on:click="onClickSet(index, this.form)" v-bind:key="set">
+						<div id="more" v-if="set.show_more">
+							Edit this dot:
+							<form>
+								<div class="row">
+									<div class="input-field col s6" v-on:click.stop>
+										<input id="id" type="text" class="validate" v-model="set.id">
+										<label class="active" for="id">ID/#</label>
+									</div>
+									<div class="input-field col s6" v-on:click.stop>
+										<input name="side" class="with-gap" type="radio" value="1" v-bind:id="'side_one'+index" v-model="set.side" />
+										<label v-bind:for="'side_one'+index">S1</label>
+										<input name="side" class="with-gap" type="radio" value="2" v-bind:id="'side_two'+index" v-model="set.side" />
+										<label v-bind:for="'side_two'+index">S2</label>
+									</div>
+								</div>
+								<div class="row">
+									<div class="input-field col s4" v-on:click.stop>
+										<input id="xsteps" type="text" class="validate" v-model="set.xSteps">
+										<label for="xsteps" class="active">x steps</label>
+									</div>
+									<div class="input-field col s4" v-on:click.stop>
+										<!--<select v-model="set.inOut" class="browser-default">
+											<option value="" disabled selected>in/out</option>
+											<option value="in">in</option>
+											<option value="out">out</option>
+										</select>-->
+										<input name="inOut" value="in" class="with-gap" type="radio" value="1" v-bind:id="'inOut_in'+index" v-model="set.inOut" />
+										<label v-bind:for="'inOut_in'+index">in</label>
+										<input name="inOut" value="out" class="with-gap" type="radio" value="2" v-bind:id="'inOut_out'+index" v-model="set.inOut" />
+										<label v-bind:for="'inOut_out'+index">out</label>
+									</div>
+									<div class="input-field col s4" v-on:click.stop>
+										<input id="yard" type="text" class="validate" v-model="set.yard">
+										<label for="yard" class="active">yard</label>
+									</div>
+								</div>
+								<div class="row">
+									<div class="input-field col s4" v-on:click.stop>
+										<input id="ysteps" type="text" class="validate active" v-model="set.ySteps">
+										<label for="ysteps">y steps</label>
+									</div>
+									<div class="input-field col s4" v-on:click.stop>
+										<select class="browser-default" v-model="set.frontBack">
+											<option value="" disabled selected>front/back</option>
+											<option value="front">front</option>
+											<option value="behind">behind</option>
+										</select>
+									</div>
+									<div class="input-field col s4" v-on:click.stop>
+										<select class="browser-default" v-model="set.yReference">
+											<option value="" disabled selected>hash/side</option>
+											<option value="FS">FS</option>
+											<option value="FH">FH</option>
+											<option value="BH">BH</option>
+											<option value="BS">BS</option>
+										</select>
+									</div>
+							</form>
 						</div>
 						<div class="right-align">
 							<a class="btn-floating btn-small waves-effect blue" v-on:click.stop="onClickDeleteSet(index)"><i class="material-icons">delete</i></a>
 						</div>
 					</div>
-					<div id="normal" v-else>
-						#<b>{{ set.id }}</b>: {{ set.text }}
+					<div id="normal" v-else> <!-- standard unexpanded view -->
+						<h5>#<b>{{ set.id }}</b>: S{{ set.side }} {{ set.xSteps }} {{ set.inOut }} {{ set.yard }} {{ set.ySteps }} {{ set.frontBack }} {{ set.yReference }} </h5>
+						{{ set.text }}
 					</div>
 				</div>
 				</transition-group>
