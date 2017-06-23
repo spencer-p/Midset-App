@@ -60,18 +60,18 @@ var app = function() {
 	}
 
 	// Compute analysis
-	self.computeAnalysis = function(i) {
+	self.computeAnalysis = function(index) {
 		// Only do work if there is a set after to do math with
-		if (i < self.vue.sets.length-1 
-			&& self.vue.sets[i].dot != undefined
-			&& self.vue.sets[i+1].dot != undefined) {
+		if (index < self.vue.sets.length-1
+			&& self.vue.sets[index].dot != undefined
+			&& self.vue.sets[index+1].dot != undefined) {
 			var analysis = {};
 			// Compute midset
-			var midset = self.vue.sets[i].dot.midset(self.vue.sets[i+1].dot);
-			analysis.midset = midset.humanReadable();	
+			var midset = self.vue.sets[index].dot.midset(self.vue.sets[index+1].dot);
+			analysis.midset = midset.humanReadable();
 
 			// Update analysis in model
-			self.vue.sets[i].analysis = analysis;
+			self.vue.sets[index].analysis = analysis;
 		}
 	}
 
@@ -108,11 +108,11 @@ var app = function() {
 		setTimeout(function() {$('select').material_select();}, 0);
 	};
 
-	self.onClickDeleteSet = function(i) {
+	self.onClickDeleteSet = function(index) {
 		console.log("onClickDeleteSet()");
-		self.vue.sets.splice(i,1);
-		// Now we need to update the midset before and at i.
-		self.updateAnalysisAround(i);
+		self.vue.sets.splice(index,1);
+		// Now we need to update the midset before and at index.
+		self.updateAnalysisAround(index);
 	};
 
 	// Shuffle function for testing set movement animation
@@ -150,7 +150,7 @@ var app = function() {
 		console.log(midset.y);
 		return midset.humanReadable();
 	}
-	
+
 	self.vue = new Vue({
 		el: "#app",
 		data: {
