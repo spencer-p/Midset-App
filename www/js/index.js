@@ -90,13 +90,8 @@ var app = function() {
 			self.vue.sets[index].dot = new Dot(self.vue.sets[index].data);
 			console.log(self.vue.sets[index].dot.humanReadable());
 
-			// If not last, generate next midset
-			self.computeAnalysis(index);
-
-			// If not first, generate prev midset
-			if (index != 0) {
-				self.computeAnalysis(index-1);
-			}
+			// update midsets
+			self.updateAnalysisAround(index);
 		}
 		// Enter show_more
 		else {
@@ -113,10 +108,11 @@ var app = function() {
 		setTimeout(function() {$('select').material_select();}, 0);
 	};
 
-	self.onClickDeleteSet = function(id) {
+	self.onClickDeleteSet = function(i) {
 		console.log("onClickDeleteSet()");
-		self.vue.sets.splice(id,1);
-		//TODO: update midsets etc
+		self.vue.sets.splice(i,1);
+		// Now we need to update the midset before and at i.
+		self.updateAnalysisAround(i);
 	};
 
 	// Shuffle function for testing set movement animation
@@ -129,6 +125,16 @@ var app = function() {
 		}
 
 	};
+
+	self.updateAnalysisAround = function(index) {
+		// If not last, generate next midset
+		self.computeAnalysis(index);
+
+		// If not first, generate prev midset
+		if (index != 0) {
+			self.computeAnalysis(index-1);
+		}
+	}
 
 	// Get midset of an indexed set
 	self.getMidset = function(index) {
