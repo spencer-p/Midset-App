@@ -68,7 +68,7 @@ var app = function() {
 			var analysis = {};
 			// Compute midset
 			var midset = self.vue.sets[index].dot.midset(self.vue.sets[index+1].dot);
-			analysis.midset = midset.humanReadable();
+			analysis.midset = midset.humanReadable;
 
 			// Update analysis in model
 			self.vue.sets[index].analysis = analysis;
@@ -88,7 +88,7 @@ var app = function() {
 		if (self.vue.sets[index].show_more) {
 			// Generate dot
 			self.vue.sets[index].dot = new Dot(self.vue.sets[index].data);
-			console.log(self.vue.sets[index].dot.humanReadable());
+			console.log("Computed dot at "+index+": "+self.vue.sets[index].dot.humanReadable);
 
 			// update midsets
 			self.updateAnalysisAround(index);
@@ -148,7 +148,7 @@ var app = function() {
 		var midset = dot1.midset(dot2);
 		console.log(midset.x);
 		console.log(midset.y);
-		return midset.humanReadable();
+		return midset.humanReadable;
 	}
 
 	self.vue = new Vue({

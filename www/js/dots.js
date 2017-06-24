@@ -26,64 +26,57 @@ var REF = PRO_REF; // Ideally we should be able to toggle high school, ncaa, etc
  * 3. find yard crossings
  */
 
-var Dot = function(data) {
+class Dot {
 
-	this.x = undefined;
-	this.y = undefined;
-	this.counts = undefined;
+	constructor(data) {
+		// Set a type. useful for sanity checks.
+		this.type = "Dot";
 
-	this.type = "Dot";
+		// Construct cartesian dot from broken down HRF.
+		if (data.side !== undefined
+			&& data.xSteps !== undefined
+			&& data.inOut !== undefined
+			&& data.frontBack !== undefined
+			&& data.ySteps !== undefined
+			&& data.yard !== undefined
+			&& data.yReference !== undefined
+			&& data.counts !== undefined) {
 
-	// Construct cartesian dot from broken down HRF.
-	if (data.side !== undefined
-		&& data.xSteps !== undefined
-		&& data.inOut !== undefined
-		&& data.frontBack !== undefined
-		&& data.ySteps !== undefined
-		&& data.yard !== undefined
-		&& data.yReference !== undefined
-		&& data.counts !== undefined) {
-		
-		// First: Yardline to 50 in steps.
-		var yardTo50 = ((50-data.yard)*8)/5 // yards * 8/5
+			this.side = data.side;
+			this.xSteps = data.xSteps;
+			this.inOut = data.inOut;
+			this.frontBack = data.frontBack;
+			this.ySteps = data.ySteps;
+			this.yard = data.yard;
+			this.yReference = data.yReference;
+			this.counts = data.counts;
+		}
 
-		// Compute x relative to 50
-		// ternary does: if xsteps is IN, flip xsteps.
-		this.x = yardTo50 + data.xSteps * ((data.inOut == "in") ? -1 : 1);
-		// The ternary is used instead of flipping data.xSteps so that we stay pure.
+		// Construct dot from cartesian
+		else if (data.x !== undefined && data.y !== undefined && data.counts !== undefined) {
+			this.x = data.x;
+			this.y = data.y;
+			this.counts = data.counts;
+		}
 
-		// if the yard is on the negative side, flip x
-		if (data.side == "1") { this.x *= -1; }
+		// Construct dot from text
+		else if (data.rawtext !== undefined) {
+			//TODO
+		}
 
-		// y is easier.
-
-		// compute final y. IMPORTANT: data.yRef must be in the same form as our REF table.
-		// parsefloat because JS thinks it's a string sometimes (but not xsteps, dk why)
-		// ternary op used as above in xsteps
-		this.y = REF[data.yReference] + parseFloat(data.ySteps) * ((data.frontBack == "front") ? -1 : 1);
-
-		// Finally take counts
-		this.counts = data.counts;
-	}
-
-	// Construct dot from cartesian
-	else if (data.x !== undefined && data.y !== undefined && data.counts !== undefined) {
-		this.x = data.x;
-		this.y = data.y;
-		this.counts = data.counts;
-	}
-
-	// Construct dot from text
-	else if (data.rawtext !== undefined) {
-		//TODO
+		// Fail
+		else {
+			throw "Failed to parse dot";
+		}
 	}
 
 	// Validate a dot
-	this.validate = function(data) {
+	validate(data) {
 		return true; //TODO
 	}
 
-	this.midset = function(to) {
+	// Midpoint between two dots
+	midset(to) {
 		if (to.type !== "Dot") {
 			return false; // Doesn't make sense
 		}
@@ -96,103 +89,147 @@ var Dot = function(data) {
 		}
 	}
 
-	this.humanReadable = function() {
-		var text = "S";
-			
-		// Decide side of field
-		if (this.x <= 0) { // On 50 will say side 1
-			text += "1 ";
+	// Pure funcs compute x and y take human readable data
+	// and transform it to a single x or y coord.
+	computeX(data) {
+
+		// First: Yardline to 50 in steps.
+		var yardTo50 = ((50-data.yard)*8)/5 // yards * 8/5
+
+		// Compute x relative to 50
+		// ternary does: if xsteps is IN, flip xsteps.
+		var x = yardTo50 + data.xSteps * ((data.inOut == "in") ? -1 : 1);
+		// The ternary is used instead of flipping data.xSteps so that we stay pure.
+
+		// if the yard is on the negative side, flip x
+		if (data.side == "1") { x *= -1; }
+
+		return x;
+	}
+
+	computeY(data) {
+		// y is easier.
+
+		// compute final y. IMPORTANT: data.yRef must be in the same form as our REF table.
+		// parsefloat because JS thinks it's a string sometimes (but not xsteps, dk why)
+		// ternary op used as above in xsteps
+		return REF[data.yReference] + parseFloat(data.ySteps) * ((data.frontBack == "front") ? -1 : 1);
+	}
+
+	// SET/GET for X/Y
+	// setting x/y computes all the human readable stuff.
+	// getting x/y computes x/y from the human readable stuff.
+	//
+	// This way the human readable stuff can be altered easily,
+	// and x/y can be computed lazily. Setting x/y is computionally
+	// heavier as a result.
+	//
+	// The human readable stuff (xSteps, yReference, etc) is therefore
+	// ALWAYS the master data and x/y are derivative of that data.
+
+	// cartesian x
+	set x(x) {
+		this._x = x;
+		// Compute data from x value
+
+		// A note about the constants used here:
+		// 8/5 and its inverse are steps related to yards. 50 is the center.
+
+		//Save side
+		if (x < 0) {
+			this.side = "1";
 		}
 		else {
-			text += "2 ";
+			this.side = "2";
 		}
 
-		// Determine relative yardline
-		// 4 steps max from each yardline, 8 steps between yardlines, yardlines are multiples of 5
-		// We calculate this ahead of time because it's used for the other calculations.
-		var yard = 50 - Math.floor((Math.abs(this.x)+4)/8)*5;
+		// Save yard
+		// 4 steps max from each yardline, 8 steps between yardlines, yardlines 
+		// are multiples of 5.
+		this.yard = 50 - Math.floor((Math.abs(x)+4)/8)*5;
 
-		// Add steps to yardline (unless on)
-		var stepsFromYard = Math.abs(Math.abs(this.x)-(50-yard)*8/5);
-		if (stepsFromYard !== 0) {
-			text += stepsFromYard + " ";
-		}
+		// Compute steps to that yardline
+		this.xSteps = Math.abs(Math.abs(x)-(50-this.yard)*8/5);
 
 		// Det. in/out
-		if (Math.abs(this.x) < (50-yard)*8/5) {
-			text += "in ";
+		if (Math.abs(x) < (50-yard)*8/5) {
+			this.inOut = "in";
 		}
 		else if (Math.abs(this.x) > (50-yard)*8/5){
-			text += "out ";
+			this.inOut = "out";
 		}
 		else {
-			text += "On ";
+			this.inOut = "on";
 		}
+	}
 
-		// Now add that yard we calculated early -- this concludes left-to-right
-		text += yard + " ";
+	get x() {
+		return this.computeX(this);
+	}
+
+	// cartesian y
+	set y(y) {
+		this._y = y;
+		// Compute data from y value
 
 		// Start front to back
 		// First figure out what reference to use
-		var front = undefined;
-		var reference = undefined;
-		if (this.y < REF.FS) {
-			// front fs
-			front = true;
-			reference = "FS";
+		if (y < (REF.FH-REF.FS)/2) { // front sideline
+			this.yReference = "FS";
 		}
-		else if (this.y < (REF.FH-REF.FS)/2) {
-			// behind fs
-			front = false;
-			reference = "FS";
+		else if (y < (REF.FS+REF.FH)+(REF.BH-REF.FH)/2) { // front hash
+			this.yReference = "FH";
 		}
-		else if (this.y < REF.FH) {
-			// front fh
-			front = true;
-			reference = "FH";
+		else if (y < (REF.FS+REF.FH+REF.BH)+(REF.BS-REF.BH)/2) { // back hash
+			this.yReference = "BH";
 		}
-		else if (this.y < (REF.FS+REF.FH)+(REF.BH-REF.FH)/2) {
-			// behind fh
-			front = false;
-			reference = "FH";
+		else { // back sideline
+			this.yReference = "BS";
 		}
-		else if (this.y < REF.BH) {
-			// front bh
-			front = true;
-			reference = "BH";
+
+		this.ySteps = REF[this.yReference]-y; // positive ySteps means in front, so subtract y
+
+		if (this.ySteps > 0) {
+			this.frontBack = "front";
 		}
-		else if (this.y < (REF.FS+REF.FH+REF.BH)+(REF.BS-REF.BH)/2) {
-			// behind bh
-			front = false;
-			reference = "BH";
-		}
-		else if (this.y <= REF.BS) {
-			// front bs
-			front = true;
-			reference = "BS";
+		else if (this.ySteps < 0) {
+			this.frontBack = "back";
+			// Make sure ySteps is positive
+			this.ySteps = Math.abs(this.ySteps);
 		}
 		else {
-			// behind bs
-			front = false;
-			reference = "BS";
+			this.frontBack = "on";
 		}
 
-		var ySteps = REF[reference]-this.y; // positive ySteps means in front
+	}
 
-		if (ySteps !== 0) { // Not on
-			text += Math.abs(ySteps) + " " + ((ySteps > 0)?"front":"back") + " " + reference;
-		}
-		else {
-			text += "On " + reference;
-		}
+	get y() {
+		return this.computeY(this);
+	}
 
-		// Done
-		return text;
+	// Text for side of the field
+	get sideText() {
+		return "S"+this.side;
+	}
+
+	// Human readable text for left to right
+	get leftToRightText() {
+		return `${this.xSteps} ${this.inOut} ${this.yard}`;
+	}
+
+	// Get human readable front to back
+	get frontToBackText() {
+		return `${this.ySteps} ${this.frontBack} ${this.yReference}`;
+	}
+
+	// Full human readable text
+	get humanReadable() {
+		return `${this.sideText} ${this.leftToRightText} ${this.frontToBackText}`;
 	}
 
 }
 
-a = new Dot({
-	side: '2', xSteps: '3.25', inOut: "in", frontBack: "front", ySteps: "13.25", yReference: "FH", yard: 15, counts: 8
-});
-console.log(a.humanReadable());
+//a = new Dot({
+//	side: '2', xSteps: '3.25', inOut: "in", frontBack: "front", ySteps: "13.25", yReference: "FH", yard: 15, counts: 8
+//});
+//console.log(a.humanReadable());
