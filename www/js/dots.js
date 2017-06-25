@@ -42,14 +42,16 @@ class Dot {
 			&& data.yReference !== undefined
 			&& data.counts !== undefined) {
 
-			this.side = data.side;
-			this.xSteps = data.xSteps;
-			this.inOut = data.inOut;
-			this.frontBack = data.frontBack;
-			this.ySteps = data.ySteps;
-			this.yard = data.yard;
-			this.yReference = data.yReference;
-			this.counts = data.counts;
+			// Iterate over keys listed above and copy them
+			// Also retains any meta data passed in
+			for (var key in data) {
+				if (key == "x" || key == "y") {
+					throw "Parsing dot - data is of conflicting types";
+				}
+				else {
+					this[key] = data[key];
+				}
+			}
 		}
 
 		// Construct dot from cartesian
@@ -152,10 +154,10 @@ class Dot {
 		this.xSteps = Math.abs(Math.abs(x)-(50-this.yard)*8/5);
 
 		// Det. in/out
-		if (Math.abs(x) < (50-yard)*8/5) {
+		if (Math.abs(x) < (50-this.yard)*8/5) {
 			this.inOut = "in";
 		}
-		else if (Math.abs(this.x) > (50-yard)*8/5){
+		else if (Math.abs(this.x) > (50-this.yard)*8/5){
 			this.inOut = "out";
 		}
 		else {
