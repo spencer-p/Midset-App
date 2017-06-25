@@ -25,6 +25,9 @@ var app = function() {
         document.addEventListener('deviceready', this.onDeviceReady.bind(this), false);
 
 		// In the future, we will load old sets here (probably)
+
+		// Update midsets of dots
+		self.fillMissingAnalysis();
     };
 
     // deviceready Event Handler
@@ -34,9 +37,6 @@ var app = function() {
     self.onDeviceReady = function() {
 		$("#app").show();
 		$('.page-footer').show();
-
-		// Update midsets of dots
-		self.fillMissingAnalysis();
 
         self.receivedEvent('deviceready');
     };
