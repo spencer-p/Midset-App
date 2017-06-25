@@ -65,7 +65,6 @@ var app = function() {
 	}
 
 	self.fillMissingAnalysis = function() {
-		console.log(self.vue.sets.length);
 		for (var i = 0; i < self.vue.sets.length; i++) {
 			if (self.vue.sets[i].analysis == undefined) {
 				self.computeAnalysis(i);
