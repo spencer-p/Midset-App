@@ -73,12 +73,13 @@ var app = function() {
 	}
 
 	// Compute analysis
+	// sets set[index] analysis to the midset between the dot before and itself
 	self.computeAnalysis = function(index) {
-		// Only do work if there is a set after to do math with
-		if (index < self.vue.sets.length-1) {
+		// Only do work if there is a set before to do math with
+		if (index > 0 && index < self.vue.sets.length) {
 			var analysis = {};
 			// Compute midset
-			var midset = self.vue.sets[index].midset(self.vue.sets[index+1]);
+			var midset = self.vue.sets[index-1].midset(self.vue.sets[index]);
 			analysis.midset = midset.humanReadable;
 
 			// Update analysis in model
@@ -134,12 +135,15 @@ var app = function() {
 	};
 
 	self.updateAnalysisAround = function(index) {
-		// If not last, generate next midset
+		// Update own midset
 		self.computeAnalysis(index);
 
-		// If not first, generate prev midset
-		if (index != 0) {
-			self.computeAnalysis(index-1);
+		// Update midset coming from this set
+		self.computeAnalysis(index+1);
+
+		// If this is the first set, there is no preceding set and our analysis should be deleted
+		if (index == 0) {
+			self.vue.sets[index].analysis = undefined;
 		}
 	}
 
