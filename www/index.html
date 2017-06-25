@@ -68,47 +68,47 @@
 										<label class="active" for="id">ID/#</label>
 									</div>
 									<div class="input-field col s6" v-on:click.stop>
-										<input name="side" class="with-gap" type="radio" value="1" v-bind:id="'side_one'+index" v-model="set.data.side" />
+										<input name="side" class="with-gap" type="radio" value="1" v-bind:id="'side_one'+index" v-model="set.side" />
 										<label v-bind:for="'side_one'+index">S1</label>
-										<input name="side" class="with-gap" type="radio" value="2" v-bind:id="'side_two'+index" v-model="set.data.side" />
+										<input name="side" class="with-gap" type="radio" value="2" v-bind:id="'side_two'+index" v-model="set.side" />
 										<label v-bind:for="'side_two'+index">S2</label>
 									</div>
 								</div>
 								<div class="row">
 									<div class="input-field col s4" v-on:click.stop>
-										<input id="xsteps" type="text" class="validate" v-model="set.data.xSteps">
+										<input id="xsteps" type="text" class="validate" v-model="set.xSteps">
 										<label for="xsteps" class="active">x steps</label>
 									</div>
 									<div class="input-field col s4" v-on:click.stop>
-										<!--<select v-model="set.data.inOut" class="browser-default">
+										<!--<select v-model="set.inOut" class="browser-default">
 											<option value="" disabled selected>in/out</option>
 											<option value="in">in</option>
 											<option value="out">out</option>
 										</select>-->
-										<input name="inOut" value="in" class="with-gap" type="radio" value="1" v-bind:id="'inOut_in'+index" v-model="set.data.inOut" />
+										<input name="inOut" value="in" class="with-gap" type="radio" value="1" v-bind:id="'inOut_in'+index" v-model="set.inOut" />
 										<label v-bind:for="'inOut_in'+index">in</label>
-										<input name="inOut" value="out" class="with-gap" type="radio" value="2" v-bind:id="'inOut_out'+index" v-model="set.data.inOut" />
+										<input name="inOut" value="out" class="with-gap" type="radio" value="2" v-bind:id="'inOut_out'+index" v-model="set.inOut" />
 										<label v-bind:for="'inOut_out'+index">out</label>
 									</div>
 									<div class="input-field col s4" v-on:click.stop>
-										<input id="yard" type="text" class="validate" v-model="set.data.yard">
+										<input id="yard" type="text" class="validate" v-model="set.yard">
 										<label for="yard" class="active">yard</label>
 									</div>
 								</div>
 								<div class="row">
 									<div class="input-field col s4" v-on:click.stop>
-										<input id="ysteps" type="text" class="validate" v-model="set.data.ySteps">
+										<input id="ysteps" type="text" class="validate" v-model="set.ySteps">
 										<label for="ysteps" class="active">y steps</label>
 									</div>
 									<div class="input-field col s4" v-on:click.stop>
-										<select class="browser-default" v-model="set.data.frontBack">
+										<select class="browser-default" v-model="set.frontBack">
 											<option value="" disabled selected>front/back</option>
 											<option value="front">front</option>
 											<option value="behind">behind</option>
 										</select>
 									</div>
 									<div class="input-field col s4" v-on:click.stop>
-										<select class="browser-default" v-model="set.data.yReference">
+										<select class="browser-default" v-model="set.yReference">
 											<option value="" disabled selected>hash/side</option>
 											<option value="FS">FS</option>
 											<option value="FH">FH</option>
@@ -123,7 +123,7 @@
 						</div>
 					</div>
 					<div id="normal" v-else> <!-- standard unexpanded view -->
-						<h5>#<b>{{ set.id }}</b>: S{{ set.data.side }} {{ set.data.xSteps }} {{ set.data.inOut }} {{ set.data.yard }} {{ set.data.ySteps }} {{ set.data.frontBack }} {{ set.data.yReference }} </h5>
+						<h5>#<b>{{ set.id }}</b>: {{ set.humanReadable }} </h5>
 						<p>{{ set.text }}</p>
 						<p v-if="set.analysis != undefined">
 						<span v-if="set.analysis.midset != undefined"> <b>Midset:</b> {{ set.analysis.midset }}</span>

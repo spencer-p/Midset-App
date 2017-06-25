@@ -23,6 +23,8 @@ var app = function() {
     // Application Constructor
     self.initialize = function() {
         document.addEventListener('deviceready', this.onDeviceReady.bind(this), false);
+
+		// In the future, we will load old sets here (probably)
     };
 
     // deviceready Event Handler
@@ -32,6 +34,10 @@ var app = function() {
     self.onDeviceReady = function() {
 		$("#app").show();
 		$('.page-footer').show();
+
+		// Update midsets of dots
+		self.fillMissingAnalysis();
+
         self.receivedEvent('deviceready');
     };
 
@@ -42,19 +48,27 @@ var app = function() {
 
 	// Template for new sets
 	self.NEW_SET = function(id) {
-		return {
+		return new Dot({
 			id : id,
 			show_more : true,
 			text : "New set",
-			data: {
-				frontBack : "front",
-				inOut : "in",
-				side : "1",
-				xSteps : "0",
-				yReference : "FH",
-				ySteps : "0",
-				yard : "50",
-				counts: 0
+
+			frontBack : "front",
+			inOut : "in",
+			side : "1",
+			xSteps : "0",
+			yReference : "FH",
+			ySteps : "0",
+			yard : "50",
+			counts: 0
+		});
+	}
+
+	self.fillMissingAnalysis = function() {
+		console.log(self.vue.sets.length);
+		for (var i = 0; i < self.vue.sets.length; i++) {
+			if (self.vue.sets[i].analysis == undefined) {
+				self.computeAnalysis(i);
 			}
 		}
 	}
@@ -62,16 +76,14 @@ var app = function() {
 	// Compute analysis
 	self.computeAnalysis = function(index) {
 		// Only do work if there is a set after to do math with
-		if (index < self.vue.sets.length-1
-			&& self.vue.sets[index].dot != undefined
-			&& self.vue.sets[index+1].dot != undefined) {
+		if (index < self.vue.sets.length-1) {
 			var analysis = {};
 			// Compute midset
-			var midset = self.vue.sets[index].dot.midset(self.vue.sets[index+1].dot);
+			var midset = self.vue.sets[index].midset(self.vue.sets[index+1]);
 			analysis.midset = midset.humanReadable;
 
 			// Update analysis in model
-			self.vue.sets[index].analysis = analysis;
+			self.vue.$set(self.vue.sets[index], "analysis", analysis);
 		}
 	}
 
@@ -86,10 +98,6 @@ var app = function() {
 
 		// Leaving show_more - compute new data
 		if (self.vue.sets[index].show_more) {
-			// Generate dot
-			self.vue.sets[index].dot = new Dot(self.vue.sets[index].data);
-			console.log("Computed dot at "+index+": "+self.vue.sets[index].dot.humanReadable);
-
 			// update midsets
 			self.updateAnalysisAround(index);
 		}
@@ -136,64 +144,45 @@ var app = function() {
 		}
 	}
 
-	// Get midset of an indexed set
-	self.getMidset = function(index) {
-		if (self.vue === undefined || index >= self.vue.sets.length - 1) {
-			return;
-		}
-		var dot1 = new Dot(self.vue.sets[index]);
-		console.log(dot1.x + " " + dot1.y)
-		var dot2 = new Dot(self.vue.sets[index+1]);
-		console.log(dot2.x + " " + dot2.y)
-		var midset = dot1.midset(dot2);
-		console.log(midset.x);
-		console.log(midset.y);
-		return midset.humanReadable;
-	}
-
 	self.vue = new Vue({
 		el: "#app",
 		data: {
 			sets: [
-				{
+				new Dot({
 					id : 0,
 					show_more : false,
 					text : "Left right up down",
-					data: {
-						frontBack : "front",
-						inOut : "in",
-						side : "1",
-						xSteps : "3",
-						yReference : "FH",
-						ySteps : "6",
-						yard : "25",
-						counts: 8
-					}
 
-				},
-				{
+					frontBack : "front",
+					inOut : "in",
+					side : "1",
+					xSteps : "3",
+					yReference : "FH",
+					ySteps : "6",
+					yard : "25",
+					counts: 8
+				}),
+				new Dot({
 					id : 1,
 					show_more : false,
 					text : "Front of the front hash or other stuff",
-					data: {
-						frontBack : "behind",
-						inOut : "in",
-						side : "2",
-						xSteps : "4",
-						yReference : "BS",
-						ySteps : "4",
-						yard : "35",
-						counts: 8
-					}
-				}
+
+					frontBack : "behind",
+					inOut : "in",
+					side : "2",
+					xSteps : "4",
+					yReference : "BS",
+					ySteps : "4",
+					yard : "35",
+					counts: 8
+				})
 			],
 			title: "Midset Calculator"
 		},
 		methods: {
 			onClickAdd: self.onClickAdd,
 			onClickSet: self.onClickSet,
-			onClickDeleteSet: self.onClickDeleteSet,
-			getMidset: self.getMidset
+			onClickDeleteSet: self.onClickDeleteSet
 		}
 	});
 
