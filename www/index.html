@@ -85,10 +85,12 @@
 											<option value="in">in</option>
 											<option value="out">out</option>
 										</select>-->
-										<input name="inOut" value="in" class="with-gap" type="radio" value="1" v-bind:id="'inOut_in'+index" v-model="set.inOut" />
+										<input name="inOut" value="in" class="with-gap" type="radio" v-bind:id="'inOut_in'+index" v-model="set.inOut" />
 										<label v-bind:for="'inOut_in'+index">in</label>
-										<input name="inOut" value="out" class="with-gap" type="radio" value="2" v-bind:id="'inOut_out'+index" v-model="set.inOut" />
+										<input name="inOut" value="out" class="with-gap" type="radio" v-bind:id="'inOut_out'+index" v-model="set.inOut" />
 										<label v-bind:for="'inOut_out'+index">out</label>
+										<input name="inOut" value="on" class="with-gap" type="radio" v-bind:id="'inOut_on'+index" v-model="set.inOut" />
+										<label v-bind:for="'inOut_on'+index">on</label>
 									</div>
 									<div class="input-field col s4" v-on:click.stop>
 										<input id="yard" type="text" class="validate" v-model="set.yard">
@@ -105,6 +107,7 @@
 											<option value="" disabled selected>front/back</option>
 											<option value="front">front</option>
 											<option value="behind">behind</option>
+											<option value="on">on</option>
 										</select>
 									</div>
 									<div class="input-field col s4" v-on:click.stop>

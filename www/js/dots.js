@@ -99,9 +99,22 @@ class Dot {
 		var yardTo50 = ((50-data.yard)*8)/5 // yards * 8/5
 
 		// Compute x relative to 50
-		// ternary does: if xsteps is IN, flip xsteps.
-		var x = yardTo50 + data.xSteps * ((data.inOut == "in") ? -1 : 1);
-		// The ternary is used instead of flipping data.xSteps so that we stay pure.
+		var x;
+		if (data.inOut == "in") {
+			// Invert xSteps if towards 50
+			x = yardTo50 + data.xSteps * -1;
+		}
+		else if (data.inOut == "out") {
+			x = yardTo50 + data.xSteps;
+		}
+		else if (data.inOut.toLowerCase() == "on") {
+			// On means don't worry about xSteps. Hopefully xSteps is 0.
+			x = yardTo50;
+		}
+		else {
+			console.log("Cannot recognize data.inOut = "+data.inOut);
+			x = NaN;
+		}
 
 		// if the yard is on the negative side, flip x
 		if (data.side == "1") { x *= -1; }
@@ -110,12 +123,26 @@ class Dot {
 	}
 
 	computeY(data) {
-		// y is easier.
+		// Important:  data.yReference must be in the same form as the REF table.
+		var ref = REF[data.yReference];
+		var ySteps = parseFloat(data.ySteps);
 
-		// compute final y. IMPORTANT: data.yRef must be in the same form as our REF table.
-		// parsefloat because JS thinks it's a string sometimes (but not xsteps, dk why)
-		// ternary op used as above in xsteps
-		return REF[data.yReference] + parseFloat(data.ySteps) * ((data.frontBack == "front") ? -1 : 1);
+		if (data.frontBack == "front") {
+			// Invert if in front
+			return ref + ySteps * -1;
+		}
+		// Just in case, check back and behind
+		else if (data.frontBack == "back" || data.frontBack == "behind") {
+			return ref + ySteps;
+		}
+		else if (data.frontBack.toLowerCase() == "on") {
+			// On means ysteps should be 0.
+			return ref;
+		}
+		else {
+			console.log("Cannot recognize data.frontBack = "+data.frontBack);
+			return NaN;
+		}
 	}
 
 	// SET/GET for X/Y
@@ -157,7 +184,7 @@ class Dot {
 		if (Math.abs(x) < (50-this.yard)*8/5) {
 			this.inOut = "in";
 		}
-		else if (Math.abs(this.x) > (50-this.yard)*8/5){
+		else if (Math.abs(x) > (50-this.yard)*8/5){
 			this.inOut = "out";
 		}
 		else {
@@ -216,12 +243,22 @@ class Dot {
 
 	// Human readable text for left to right
 	get leftToRightText() {
-		return `${this.xSteps} ${this.inOut} ${this.yard}`;
+		var text = "";
+		if (this.inOut.toLowerCase() != "on") {
+			text += this.xSteps + " ";
+		}
+		text += this.inOut + " " + this.yard;
+		return text;
 	}
 
 	// Get human readable front to back
 	get frontToBackText() {
-		return `${this.ySteps} ${this.frontBack} ${this.yReference}`;
+		var text = "";
+		if (this.frontBack.toLowerCase() != "on") {
+			text += this.ySteps + " ";
+		}
+		text += this.frontBack + " " + this.yReference;
+		return text;
 	}
 
 	// Full human readable text
