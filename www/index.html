@@ -129,9 +129,15 @@
 					<div id="normal" v-else> <!-- standard unexpanded view -->
 						<h5>#<b>{{ set.id }}</b>: {{ set.humanReadable }} </h5>
 						<p>{{ set.text }}</p>
-						<p v-if="set.analysis != undefined">
-						<span v-if="set.analysis.midset != undefined"> <b>Midset:</b> {{ set.analysis.midset }}</span>
-						</p>
+						<div v-if="set.analysis != undefined">
+							<span v-if="set.analysis.midset != undefined"> <b>Midset:</b> {{ set.analysis.midset }}</span>
+							<div v-if="set.analysis.crossings != undefined">
+								<b>Yard Line Crossings:</b>
+								<ul>
+									<li v-for="line in set.analysis.crossings"> {{ line }} </li>
+								</ul>
+							</div>
+						</div>
 					</div>
 				</div>
 				</transition-group>

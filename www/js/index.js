@@ -82,6 +82,8 @@ var app = function() {
 			var midset = self.vue.sets[index-1].midset(self.vue.sets[index]);
 			analysis.midset = midset.humanReadable;
 
+			analysis.crossings = self.vue.sets[index-1].yardLineCrossings(self.vue.sets[index]);
+
 			// Update analysis in model
 			self.vue.$set(self.vue.sets[index], "analysis", analysis);
 		}
@@ -198,4 +200,3 @@ jQuery(function() {
 	APP = app();
 	APP.initialize();
 });
-

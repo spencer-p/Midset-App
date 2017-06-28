@@ -91,6 +91,27 @@ class Dot {
 		}
 	}
 
+	yardLineCrossings(to) {
+		var crossings = [];
+
+		// Save these to avoid repeated calculations
+		var x1 = this.x;
+		var x2 = to.x;
+		// Number of crossings is a counting problem: how many numbers are in
+		// between this.x and to.x that are divisible by 8 (steps per yard)
+		var numCrossings = Math.abs(Math.floor(x1/8) - Math.floor(x2/8));
+
+		for (var i = 1; i <= numCrossings; i++) {
+			// If x is positive, this gets the next yard in steps
+			var nextYardInSteps = this.x + (i-1)*8 - (x1 % 8);
+
+			var yardLine = this.stepsToYard(nextYardInSteps);
+			crossings.push("Cross " + yardLine + " yardline");
+		}
+
+		return crossings;
+	}
+
 	// Pure funcs compute x and y take human readable data
 	// and transform it to a single x or y coord.
 	computeX(data) {
@@ -102,10 +123,10 @@ class Dot {
 		var x;
 		if (data.inOut == "in") {
 			// Invert xSteps if towards 50
-			x = yardTo50 + data.xSteps * -1;
+			x = yardTo50 + parseFloat(data.xSteps) * -1;
 		}
 		else if (data.inOut == "out") {
-			x = yardTo50 + data.xSteps;
+			x = yardTo50 + parseFloat(data.xSteps);
 		}
 		else if (data.inOut.toLowerCase() == "on") {
 			// On means don't worry about xSteps. Hopefully xSteps is 0.
@@ -145,6 +166,10 @@ class Dot {
 		}
 	}
 
+	stepsToYard(steps) {
+		return 50 - Math.floor((Math.abs(steps)+4)/8)*5;
+	}
+
 	// SET/GET for X/Y
 	// setting x/y computes all the human readable stuff.
 	// getting x/y computes x/y from the human readable stuff.
@@ -173,9 +198,9 @@ class Dot {
 		}
 
 		// Save yard
-		// 4 steps max from each yardline, 8 steps between yardlines, yardlines 
+		// 4 steps max from each yardline, 8 steps between yardlines, yardlines
 		// are multiples of 5.
-		this.yard = 50 - Math.floor((Math.abs(x)+4)/8)*5;
+		this.yard = this.stepsToYard(x);
 
 		// Compute steps to that yardline
 		this.xSteps = Math.abs(Math.abs(x)-(50-this.yard)*8/5);
@@ -280,8 +305,3 @@ class Dot {
 	}
 
 }
-
-//a = new Dot({
-//	side: '2', xSteps: '3.25', inOut: "in", frontBack: "front", ySteps: "13.25", yReference: "FH", yard: 15, counts: 8
-//});
-//console.log(a.humanReadable());
