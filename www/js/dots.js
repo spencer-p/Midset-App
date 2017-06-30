@@ -253,7 +253,8 @@ class Dot {
 			this.yReference = "BS";
 		}
 
-		this.ySteps = REF[this.yReference]-y; // positive ySteps means in front, so subtract y
+		// positive ySteps means in front, so subtract y
+		this.ySteps = REF[this.yReference]-y;
 
 		if (this.ySteps > 0) {
 			this.frontBack = "front";
@@ -282,7 +283,9 @@ class Dot {
 	get leftToRightText() {
 		var text = "";
 		if (this.inOut.toLowerCase() != "on") {
-			text += this.xSteps + " ";
+			// inner parsefloat to convert possible text, outer parsefloat to remove
+			// any trailing zeroes as a result of toFixed
+			text += parseFloat(parseFloat(this.xSteps).toFixed(2)) + " ";
 		}
 		text += this.inOut + " " + this.yard;
 		return text;
@@ -292,7 +295,8 @@ class Dot {
 	get frontToBackText() {
 		var text = "";
 		if (this.frontBack.toLowerCase() != "on") {
-			text += this.ySteps + " ";
+			// see above in leftToRight to explain the parsefloats
+			text += parseFloat(parseFloat(this.ySteps).toFixed(2)) + " ";
 		}
 		text += this.frontBack + " " + this.yReference;
 		return text;
