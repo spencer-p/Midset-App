@@ -60,7 +60,7 @@ var app = function() {
 			yReference : "FH",
 			ySteps : "0",
 			yard : "50",
-			counts: 0
+			counts: 8
 		});
 	}
 
@@ -159,12 +159,12 @@ var app = function() {
 					text : "Left right up down",
 
 					frontBack : "front",
-					inOut : "in",
-					side : "1",
-					xSteps : "3",
+					inOut : "out",
+					side : "2",
+					xSteps : "4",
 					yReference : "FH",
 					ySteps : "6",
-					yard : "25",
+					yard : "30",
 					counts: 8
 				}),
 				new Dot({
@@ -175,10 +175,24 @@ var app = function() {
 					frontBack : "behind",
 					inOut : "in",
 					side : "2",
-					xSteps : "4",
+					xSteps : "2",
 					yReference : "BS",
 					ySteps : "4",
-					yard : "35",
+					yard : "30",
+					counts: 8
+				}),
+				new Dot({
+					id : 2,
+					show_more : false,
+					text : "Left right up down",
+
+					frontBack : "front",
+					inOut : "out",
+					side : "2",
+					xSteps : "4",
+					yReference : "FH",
+					ySteps : "6",
+					yard : "30",
 					counts: 8
 				})
 			],
