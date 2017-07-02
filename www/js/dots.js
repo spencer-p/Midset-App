@@ -96,10 +96,12 @@ class Dot {
 
 		// Save x values to avoid repeated computionas
 		// Contrived a little bit to get x1 and x2 in the rigt order (max, min)
-		var _this = this.x;
-		var _to = to.x;
-		var x1 = Math.max(_this, _to);
-		var x2 = Math.min(_this, _to);
+		// var _this = this.x;
+		// var _to = to.x;
+		// var x1 = Math.max(_this, _to);
+		// var x2 = Math.min(_this, _to);
+		var x1 = this.x;
+		var x2 = to.x;
 
 		// Number of crossings is a counting problem: how many numbers are in
 		// between this.x and to.x that are divisible by 8 (steps per yard)
@@ -108,9 +110,23 @@ class Dot {
 		// Used for calculating fraction of total x
 		var totalDx = Math.abs(x1-x2);
 
+		// Figure out if we're moving in positive direction or not
+		// We save this as either 1 or -1 so we can apply it to each iteration
+		var dir = 1;
+		if (x1 > x2) {
+			dir = -1;
+		}
+
 		for (var i = 1; i <= numCrossings; i++) {
 			// First calculate what the next yardline we'll cross is
-			var nextYardInSteps = x1 + (i-1)*8 - (x1 % 8);
+			// Note above definition of dir
+			var nextYardInSteps;
+			if (dir == -1) {
+				nextYardInSteps = x1 + (dir*(i-1))*8 - (x1 % 8);
+			}
+			else {
+				nextYardInSteps = x1 + (dir*(i-1))*8 - (8 - (x1 % 8))
+			}
 
 			// Calculate counts to the specified yard line
 			var nextYardDx = Math.abs(nextYardInSteps-x1);
