@@ -92,14 +92,10 @@ class Dot {
 	}
 
 	yardLineCrossings(to) {
+		// List we will populate with crossings
 		var crossings = [];
 
-		// Save x values to avoid repeated computionas
-		// Contrived a little bit to get x1 and x2 in the rigt order (max, min)
-		// var _this = this.x;
-		// var _to = to.x;
-		// var x1 = Math.max(_this, _to);
-		// var x2 = Math.min(_this, _to);
+		// Save x values to avoid repeated heavy (relatively) computations
 		var x1 = this.x;
 		var x2 = to.x;
 
@@ -107,26 +103,30 @@ class Dot {
 		// between this.x and to.x that are divisible by 8 (steps per yard)
 		var numCrossings = Math.abs(Math.floor(x1/8) - Math.floor(x2/8));
 
-		// Used for calculating fraction of total x
+		// X component of the vector - used for calculating fraction of total x
 		var totalDx = Math.abs(x1-x2);
 
-		// Figure out if we're moving in positive direction or not
+		// Figure out if we're moving in positive or negative direciton
 		// We save this as either 1 or -1 so we can apply it to each iteration
 		var dir = 1;
 		if (x1 > x2) {
 			dir = -1;
 		}
 
-		for (var i = 1; i <= numCrossings; i++) {
+		// Calculate the first yardline we cross (every other is +/- 8 steps)
+		// Start with the yardline immediately less than x1
+		var firstYardToCross = x1 - (x1 % 8);
+		// If we're moving in the positive direcion, then take the yard
+		// on the opposite side of x1 by adding 8
+		if (dir == 1) {
+			firstYardToCross += 8;
+		}
+
+		// Loop for numCrossings, add each yardline crossing
+		for (var i = 0; i < numCrossings; i++) {
 			// First calculate what the next yardline we'll cross is
 			// Note above definition of dir
-			var nextYardInSteps;
-			if (dir == -1) {
-				nextYardInSteps = x1 + (dir*(i-1))*8 - (x1 % 8);
-			}
-			else {
-				nextYardInSteps = x1 + (dir*(i-1))*8 - (8 - (x1 % 8))
-			}
+			var nextYardInSteps = firstYardToCross + (dir * 8 * i);
 
 			// Calculate counts to the specified yard line
 			var nextYardDx = Math.abs(nextYardInSteps-x1);
@@ -137,6 +137,7 @@ class Dot {
 			crossings.push("Cross " + yardLine + " yardline on count " + countsToYard);
 		}
 
+		// Done
 		return crossings;
 	}
 
