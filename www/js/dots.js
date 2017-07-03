@@ -7,19 +7,11 @@
  * The 50 on the front sideline is (0,0).
  * To the left (side one) is negative. To the right is positive.
  * All y values are positive.
- */
-
-// Reference data
-var PRO_REF = {
-	FS: 0,
-	FH: 32, // behind FS
-	BH: 52, // BFS
-	BS: 84 // BFS
-};
-
-var REF = PRO_REF; // Ideally we should be able to toggle high school, ncaa, etc
-
-/*
+ *
+ * After the Dot's definition is reference definition
+ *
+ * The Dot Object
+ *
  * The dot object should
  * 1. be able to translate human readable forms (HRF) to cartesian coords
  * 2. calculate midsets (and quarters, etc)
@@ -338,3 +330,35 @@ class Dot {
 	}
 
 }
+
+// Reference data - designed to be used as an enum
+var REFS = {
+	PRO: { // professional reference
+		FS: 0,
+		FH: 32, // behind FS
+		BH: 52, // BFS
+		BS: 84 // BFS
+	},
+	HS: { // high school
+		FS: 0,
+		FH: 28,
+		BH: 56,
+		BS: 84
+	}
+	// TODO numbers, NCAA, etc
+};
+
+var REF;
+
+// Function to set global REF value that is used by the Dot object
+var DOT_SET_REF = function (type) {
+	if (REFS[type] !== undefined) {
+		REF = REFS[type];
+	}
+	else {
+		throw "Could not understand reference type \"" + type + "\"";
+	}
+}
+
+// Set reference to PRO by default
+DOT_SET_REF("PRO");
