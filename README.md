@@ -1,6 +1,6 @@
 # Midset App
-[!screenshot](screenshot.png)
-This is an unfinished app to keep track of coordinates on a football field for members of marching bands or drum corps. It uses apache cordova, `vue.js`, `materialize.css`, and I believe `jquery`. Theoretically it's multiplatform. You can try it [!in the browser](https://people.ucsc.edu/~spjpeter/midset) if that's still up.
+![screenshot](screenshot.png)
+This is an unfinished app to keep track of coordinates on a football field for members of marching bands or drum corps. It uses apache cordova, `vue.js`, `materialize.css`, and I believe `jquery`. Theoretically it's multiplatform. You can try it ![in the browser](https://people.ucsc.edu/~spjpeter/midset) if that's still up.
 ### Features
  - Unlimited sets
  - Midsets
